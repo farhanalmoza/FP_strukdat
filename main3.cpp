@@ -2,6 +2,7 @@
 #include <conio.h>
 using namespace std;
 
+// STRUCT KOMIK
 struct komik {
     int kode_komik, tahun;
     char judul[50], penerbit[50], pengarang[50];
@@ -304,7 +305,7 @@ Node* deleteNode(Node* root, int kode_komik) {
 
 
 
-// ================== START STRUCT KOMIK ==================
+// ================== START INSERT STRUCT KOMIK ==================
 void tambah(int kode_komik) {
     char judul[50];
     char penerbit[50];
@@ -339,7 +340,7 @@ void tambah(int kode_komik) {
     cout << "\nKomik Berhasil Ditambahkan" << endl << endl;
 }
 
-// =================== END STRUCT KOMIK ===================
+// =================== END INSERT STRUCT KOMIK ===================
 
 
 
