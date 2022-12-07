@@ -1,0 +1,356 @@
+#include<bits/stdc++.h>
+#include <conio.h>
+using namespace std;
+
+// buat node AVL tree
+class Node
+{
+	public:
+	int key;
+	Node *left;
+	Node *right;
+	int height;
+};
+
+// fungsi untuk mendapatkan tinggi node
+int height(Node *N)
+{
+	if (N == NULL)
+		return 0;
+	return N->height;
+}
+
+// fungsi untuk mendapatkan nilai maksimum
+int max(int a, int b)
+{
+	return (a > b)? a : b;
+}
+
+/* fungsi untuk membuat node baru
+   dengan key yang diberikan */
+Node* newNode(int key)
+{
+	Node* node = new Node();
+	node->key = key;
+	node->left = NULL;
+	node->right = NULL;
+	node->height = 1; // node baru di tambahkan
+					// di daun
+	return(node);
+}
+
+// fungsi untuk melakukan rotasi kanan
+Node *rightRotate(Node *y)
+{
+	Node *x = y->left;
+	Node *T2 = x->right;
+
+	// Lakukan rotasi
+	x->right = y;
+	y->left = T2;
+
+	// Update tinggi
+	y->height = max(height(y->left),
+					height(y->right)) + 1;
+	x->height = max(height(x->left),
+					height(x->right)) + 1;
+
+	// Return new root
+	return x;
+}
+
+// fungsi untuk melakukan rotasi kiri
+Node *leftRotate(Node *x)
+{
+	Node *y = x->right;
+	Node *T2 = y->left;
+
+	// Lakukan rotasi
+	y->left = x;
+	x->right = T2;
+
+	// Update tinggi
+	x->height = max(height(x->left),
+					height(x->right)) + 1;
+	y->height = max(height(y->left),
+					height(y->right)) + 1;
+
+	// Return new root
+	return y;
+}
+
+// fungsi untuk mendapatkan balance factor
+int getBalance(Node *N)
+{
+	if (N == NULL)
+		return 0;
+	return height(N->left) - height(N->right);
+}
+
+// fungsi min value node
+Node * minValueNode(Node* node)
+{
+    Node* current = node;
+
+    /* loop down to find the leftmost leaf */
+    while (current->left != NULL)
+        current = current->left;
+
+    return current;
+}
+
+
+// ================== START INSERT ==================
+// fungsi untuk melakukan insert node
+Node* insert(Node* node, int key)
+{
+	/* 1. normal BST insert */
+	if (node == NULL)
+		return(newNode(key));
+
+	if (key < node->key)
+		node->left = insert(node->left, key);
+	else if (key > node->key)
+		node->right = insert(node->right, key);
+	else // nilai key sama dengan node yang ada
+		return node;
+
+	/* 2. Update tinggi node */
+	node->height = 1 + max(height(node->left),
+						height(node->right));
+
+	/* 3. Get balance factor dari node */
+	int balance = getBalance(node);
+
+	// Jika node tidak balance, ada 4 kasus
+
+	// Left Left Case
+	if (balance > 1 && key < node->left->key)
+		return rightRotate(node);
+
+	// Right Right Case
+	if (balance < -1 && key > node->right->key)
+		return leftRotate(node);
+
+	// Left Right Case
+	if (balance > 1 && key > node->left->key) {
+		node->left = leftRotate(node->left);
+		return rightRotate(node);
+	}
+
+	// Right Left Case
+	if (balance < -1 && key < node->right->key) {
+		node->right = rightRotate(node->right);
+		return leftRotate(node);
+	}
+
+	/* return node yang tidak berubah */
+	return node;
+}
+// =================== END INSERT ===================
+
+
+// ================== START SHOW ALL ==================
+// fungsi untuk melakukan preorder traversal
+void preOrder(Node *root)
+{
+	if(root != NULL)
+	{
+		cout << root->key << " ";
+		preOrder(root->left);
+		preOrder(root->right);
+	}
+}
+
+// fungsi untuk melakukan inorder traversal
+void inOrder(Node *root) {
+    if(root != NULL) {
+        inOrder(root->left);
+        cout << root->key << " ";
+        inOrder(root->right);
+    }
+}
+
+// fungsi untuk melakukan postorder traversal
+void postOrder(Node *root) {
+    if(root != NULL) {
+        postOrder(root->left);
+        postOrder(root->right);
+        cout << root->key << " ";
+    }
+}
+// =================== END SHOW ALL ===================
+
+
+// ================== START DELETE ==================
+/* Fungsi rekursif untuk menghapus node dengan kunci
+ * yang diberikan dari subtree dengan root yang diberikan.
+ * Ini mengembalikan root dari subtree yang dimodifikasi.
+ * */
+Node* deleteNode(Node* root, int kode_komik) {
+    // STEP 1: NORMAL BST DELETE
+    if (root == NULL)
+        return root;
+
+    // Jika kunci yang akan dihapus lebih kecil dari
+    // root->key, maka akan berada di subtree kiri
+    if (kode_komik < root->key)
+        root->left = deleteNode(root->left, kode_komik);
+
+    // Jika kunci yang akan dihapus lebih besar dari
+    // root->key, maka akan berada di subtree kanan
+    else if (kode_komik > root->key)
+        root->right = deleteNode(root->right, kode_komik);
+
+    // Jika kunci yang akan dihapus sama dengan root->key
+    else {
+        // node dengan satu anak atau tanpa anak
+        if ((root->left == NULL) || (root->right == NULL)) {
+            Node *temp = root->left ? root->left : root->right;
+
+            // Tidak ada anak
+            if (temp == NULL) {
+                temp = root;
+                root = NULL;
+            }
+            else // Ada satu anak
+                *root = *temp; // Copy isi dari anak
+            free(temp);
+        }
+        else {
+            // node dengan dua anak: dapatkan inorder successor
+            // (nilai terkecil di subtree kanan)
+            Node* temp = minValueNode(root->right);
+
+            // Copy isi inorder successor ke node yang akan dihapus
+            root->key = temp->key;
+
+            // Hapus inorder successor
+            root->right = deleteNode(root->right, temp->key);
+        }
+    }
+
+    // Jika tree hanya memiliki satu node
+    if (root == NULL)
+        return root;
+
+    // STEP 2: UPDATE TINGGI NODE
+    root->height = 1 + max(height(root->left),
+                        height(root->right));
+
+    // STEP 3: GET BALANCE FACTOR
+    int balance = getBalance(root);
+
+    // Jika node tidak balance, ada 4 kasus
+
+    // Left Left Case
+    if (balance > 1 && getBalance(root->left) >= 0)
+        return rightRotate(root);
+
+    // Left Right Case
+    if (balance > 1 && getBalance(root->left) < 0) {
+        root->left = leftRotate(root->left);
+        return rightRotate(root);
+    }
+
+    // Right Right Case
+    if (balance < -1 && getBalance(root->right) <= 0)
+        return leftRotate(root);
+
+    // Right Left Case
+    if (balance < -1 && getBalance(root->right) > 0) {
+        root->right = rightRotate(root->right);
+        return leftRotate(root);
+    }
+
+    return root;
+}
+
+// =================== END DELETE ===================
+
+// fungsi utama
+int main()
+{
+    int pilihan;
+    
+    cout << "===============================" << endl;
+	cout << "=== Program Pendataan Komik ===" << endl; 
+	cout << "===============================" << endl << endl;
+	
+	cout << "DISUSUN OLEH KELOMPOK 5 " << endl;
+	cout << "Azka Avicenna Rasjid	[20081010115]" << endl;
+	cout << "Farkhan			[20081010060]" << endl;
+	cout << "Kuncoro Ariadi		[20081010096]" << endl << endl;
+
+	Node *root = NULL;
+
+    do {
+        cout << "Pilihan menu yang tersedia : " << endl;
+        cout << "1. Tambah Komik" << endl;
+        cout << "2. Tampil Komik di Gudang" << endl;
+        cout << "3. Cari Komik di Gudang" << endl;
+        cout << "4. Hapus Komik di Gudang" << endl;
+        cout << "5. Keluar" << endl << endl;
+        cout << ">> Masukkan Pilihan : "; cin >> pilihan;
+
+        cout << endl;
+        switch (pilihan) {
+            case 1:
+                // panggil fungsi insert
+                int kode_komik;
+                cout << "Masukkan kode komik yang akan ditambahkan: ";
+                cin >> kode_komik;
+                root = insert(root, kode_komik);
+                break;
+            case 2:
+                // lakukan pilihan traversal
+                int pilihan_traversal;
+                cout << "Pilihan traversal yang tersedia : " << endl;
+                cout << "1. Preorder" << endl;
+                cout << "2. Inorder" << endl;
+                cout << "3. Postorder" << endl << endl;
+                cout << ">> Masukkan Pilihan : "; cin >> pilihan_traversal;
+                cout << endl;
+                switch (pilihan_traversal) {
+                    case 1:
+                        cout << "Data komik yang ada di gudang: " << endl;
+                        preOrder(root);
+                        getch();
+                        break;
+                    case 2:
+                        cout << "Data komik yang ada di gudang: " << endl;
+                        inOrder(root);
+                        getch();
+                        break;
+                    case 3:
+                        cout << "Data komik yang ada di gudang: " << endl;
+                        postOrder(root);
+                        getch();
+                        break;
+                    default:
+                        cout << "Pilihan tidak tersedia" << endl;
+                }
+                break;
+            case 3: 
+                cout << "belum ada fungsi ini" << endl;
+                getch();
+                break;
+            case 4: 
+                // panggil fungsi delete
+                int kode_komik_hapus;
+                cout << "Masukkan kode komik yang akan dihapus: "; cin >> kode_komik_hapus;
+                root = deleteNode(root, kode_komik_hapus);
+                getch();
+                break;
+            case 5:
+                cout << "Terima Kasih Telah Menggunakan Program Ini..." << endl;
+                getch();
+                break;
+            default:
+                cout << "Pilihan tidak tersedia" << endl;
+        }
+        system("cls");	
+    } while (pilihan != 5);
+    
+    return 0;
+}
