@@ -2,6 +2,15 @@
 #include <conio.h>
 using namespace std;
 
+struct komik {
+    int kode_komik, tahun;
+    char judul[50], penerbit[50], pengarang[50];
+    struct komik *next;
+};
+struct komik* front = NULL;
+struct komik* rear = NULL;
+struct komik* temp;
+
 // buat node AVL tree
 class Node
 {
@@ -151,12 +160,35 @@ Node* insert(Node* node, int key)
 
 
 // ================== START SHOW ALL ==================
+void tampil(int kode_komik) {
+    int flag = 0;
+    temp = front;
+
+    while (temp != NULL) {
+        if (temp->kode_komik == kode_komik) {
+            flag = 1;
+            break;
+        }
+        temp = temp->next;
+    }
+    if (flag == 1) {
+        cout << "\nKode Komik		: " << temp->kode_komik << endl;
+        cout << "Judul Komik		: " << temp->judul << endl;
+        cout << "Penerbit Komik		: " << temp->penerbit << endl;
+        cout << "Pengarang Komik		: " << temp->pengarang << endl;
+        cout << "Tahun Terbit Komik	: " << temp->tahun << endl;
+    }
+
+    cout << endl;
+}
+
 // fungsi untuk melakukan preorder traversal
 void preOrder(Node *root)
 {
 	if(root != NULL)
 	{
-		cout << root->key << " ";
+        // panggil fungsi tampil
+        tampil(root->key);
 		preOrder(root->left);
 		preOrder(root->right);
 	}
@@ -166,7 +198,8 @@ void preOrder(Node *root)
 void inOrder(Node *root) {
     if(root != NULL) {
         inOrder(root->left);
-        cout << root->key << " ";
+        // panggil fungsi tampil
+        tampil(root->key);
         inOrder(root->right);
     }
 }
@@ -176,7 +209,8 @@ void postOrder(Node *root) {
     if(root != NULL) {
         postOrder(root->left);
         postOrder(root->right);
-        cout << root->key << " ";
+        // panggil fungsi tampil
+        tampil(root->key);
     }
 }
 // =================== END SHOW ALL ===================
@@ -268,6 +302,47 @@ Node* deleteNode(Node* root, int kode_komik) {
 
 // =================== END DELETE ===================
 
+
+
+// ================== START STRUCT KOMIK ==================
+void tambah(int kode_komik) {
+    char judul[50];
+    char penerbit[50];
+    char pengarang[50];
+    int tahun;
+    
+    cout << ">> Masukkan Judul Komik		: "; cin >> judul;
+    cout << ">> Masukkan Penerbit Komik	: "; cin >> penerbit;
+    cout << ">> Masukkan Pengarang Komik	: "; cin >> pengarang;
+    cout << ">> Masukkan Tahun Terbit Komik	: "; cin >> tahun;
+
+    if (rear == NULL) {
+        rear = (struct komik *)malloc(sizeof(struct komik));
+        rear->next = NULL;
+        rear->kode_komik = kode_komik;
+        strcpy(rear->judul, judul);
+        strcpy(rear->penerbit, penerbit);
+        strcpy(rear->pengarang, pengarang);
+        rear->tahun = tahun;
+        front = rear;
+    } else {
+        temp=(struct komik *)malloc(sizeof(struct komik));
+        rear->next = temp;
+        temp->kode_komik = kode_komik;
+        strcpy(temp->judul, judul);
+        strcpy(temp->penerbit, penerbit);
+        strcpy(temp->pengarang, pengarang);
+        temp->tahun = tahun;
+        temp->next = NULL;
+        rear = temp;
+    }
+    cout << "\nKomik Berhasil Ditambahkan" << endl << endl;
+}
+
+// =================== END STRUCT KOMIK ===================
+
+
+
 // fungsi utama
 int main()
 {
@@ -295,11 +370,10 @@ int main()
 
         cout << endl;
         switch (pilihan) {
-            case 1:
-                // panggil fungsi insert
+            case 1: 
                 int kode_komik;
-                cout << "Masukkan kode komik yang akan ditambahkan: ";
-                cin >> kode_komik;
+                cout << ">> Masukkan Kode Komik		: "; cin >> kode_komik;
+                tambah(kode_komik);
                 root = insert(root, kode_komik);
                 break;
             case 2:
