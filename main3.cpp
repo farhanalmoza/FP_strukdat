@@ -23,23 +23,20 @@ class Node
 };
 
 // fungsi untuk mendapatkan tinggi node
-int height(Node *N)
-{
+int height(Node *N) {
 	if (N == NULL)
 		return 0;
 	return N->height;
 }
 
 // fungsi untuk mendapatkan nilai maksimum
-int max(int a, int b)
-{
+int max(int a, int b) {
 	return (a > b)? a : b;
 }
 
 /* fungsi untuk membuat node baru
    dengan key yang diberikan */
-Node* newNode(int key)
-{
+Node* newNode(int key) {
 	Node* node = new Node();
 	node->key = key;
 	node->left = NULL;
@@ -50,8 +47,7 @@ Node* newNode(int key)
 }
 
 // fungsi untuk melakukan rotasi kanan
-Node *rightRotate(Node *y)
-{
+Node *rightRotate(Node *y) {
 	Node *x = y->left;
 	Node *T2 = x->right;
 
@@ -70,8 +66,7 @@ Node *rightRotate(Node *y)
 }
 
 // fungsi untuk melakukan rotasi kiri
-Node *leftRotate(Node *x)
-{
+Node *leftRotate(Node *x) {
 	Node *y = x->right;
 	Node *T2 = y->left;
 
@@ -90,16 +85,14 @@ Node *leftRotate(Node *x)
 }
 
 // fungsi untuk mendapatkan balance factor
-int getBalance(Node *N)
-{
+int getBalance(Node *N) {
 	if (N == NULL)
 		return 0;
 	return height(N->left) - height(N->right);
 }
 
 // fungsi min value node
-Node * minValueNode(Node* node)
-{
+Node * minValueNode(Node* node) {
     Node* current = node;
 
     /* loop down to find the leftmost leaf */
@@ -112,8 +105,7 @@ Node * minValueNode(Node* node)
 
 // ================== START INSERT ==================
 // fungsi untuk melakukan insert node
-Node* insert(Node* node, int key)
-{
+Node* insert(Node* node, int key) {
 	/* 1. normal BST insert */
 	if (node == NULL)
 		return(newNode(key));
@@ -184,8 +176,7 @@ void tampil(int kode_komik) {
 }
 
 // fungsi untuk melakukan preorder traversal
-void preOrder(Node *root)
-{
+void preOrder(Node *root) {
 	if(root != NULL)
 	{
         // panggil fungsi tampil
@@ -345,8 +336,7 @@ void tambah(int kode_komik) {
 
 
 // fungsi utama
-int main()
-{
+int main() {
     int pilihan;
     
     cout << "===============================" << endl;
@@ -364,9 +354,8 @@ int main()
         cout << "Pilihan menu yang tersedia : " << endl;
         cout << "1. Tambah Komik" << endl;
         cout << "2. Tampil Komik di Gudang" << endl;
-        cout << "3. Cari Komik di Gudang" << endl;
-        cout << "4. Hapus Komik di Gudang" << endl;
-        cout << "5. Keluar" << endl << endl;
+        cout << "3. Hapus Komik di Gudang" << endl;
+        cout << "4. Keluar" << endl << endl;
         cout << ">> Masukkan Pilihan : "; cin >> pilihan;
 
         cout << endl;
@@ -407,17 +396,13 @@ int main()
                 }
                 break;
             case 3: 
-                cout << "belum ada fungsi ini" << endl;
-                getch();
-                break;
-            case 4: 
                 // panggil fungsi delete
                 int kode_komik_hapus;
                 cout << "Masukkan kode komik yang akan dihapus: "; cin >> kode_komik_hapus;
                 root = deleteNode(root, kode_komik_hapus);
                 getch();
                 break;
-            case 5:
+            case 4: 
                 cout << "Terima Kasih Telah Menggunakan Program Ini..." << endl;
                 getch();
                 break;
@@ -425,7 +410,7 @@ int main()
                 cout << "Pilihan tidak tersedia" << endl;
         }
         system("cls");	
-    } while (pilihan != 5);
+    } while (pilihan != 4);
     
     return 0;
 }
