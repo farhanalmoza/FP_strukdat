@@ -157,9 +157,9 @@ Node* insertBST(Node* node, int key) {
 		return(newNode(key));
 
 	if (key < node->key)
-		node->left = insert(node->left, key);
+		node->left = insertBST(node->left, key);
 	else if (key > node->key)
-		node->right = insert(node->right, key);
+		node->right = insertBST(node->right, key);
 	else // nilai key sama dengan node yang ada
 		return node;
 
