@@ -149,6 +149,26 @@ Node* insert(Node* node, int key) {
 	/* return node yang tidak berubah */
 	return node;
 }
+
+// fungsi insert BST
+Node* insertBST(Node* node, int key) {
+	/* 1. normal BST insert */
+	if (node == NULL)
+		return(newNode(key));
+
+	if (key < node->key)
+		node->left = insert(node->left, key);
+	else if (key > node->key)
+		node->right = insert(node->right, key);
+	else // nilai key sama dengan node yang ada
+		return node;
+
+	/* 2. Update tinggi node */
+	node->height = 1 + max(height(node->left),
+						height(node->right));
+
+    return node;
+}
 // =================== END INSERT ===================
 
 
@@ -292,6 +312,54 @@ Node* deleteNode(Node* root, int kode_komik) {
     return root;
 }
 
+// Delete BST
+Node* deleteNodeBST(Node* root, int key)
+{
+    // base case
+    if (root == NULL)
+        return root;
+ 
+    // Jika key yang akan dihapus
+    // lebih kecil dari key root,
+    // maka key tersebut terletak di subtree kiri
+    if (key < root->key)
+        root->left = deleteNode(root->left, key);
+ 
+    // Jika key yang akan dihapus
+    // lebih kecil dari key root,
+    // maka key tersebut terletak di subtree kanan
+    else if (key > root->key)
+        root->right = deleteNode(root->right, key);
+ 
+    // jika key dan root sama, maka hapus node ini
+    else {
+        // node yang tidak memiliki anak
+        if (root->left == NULL and root->right == NULL)
+            return NULL;
+ 
+        // node dengan satu anak atau tanpa anak
+        else if (root->left == NULL) {
+            Node* temp = root->right;
+            free(root);
+            return temp;
+        }
+        else if (root->right == NULL) {
+            Node* temp = root->left;
+            free(root);
+            return temp;
+        }
+ 
+        // node dengan 2 anak
+        Node* temp = minValueNode(root->right);
+ 
+        // Copy isi inorder successor ke node yang akan dihapus
+        root->key = temp->key;
+ 
+        // Hapus inorder successor
+        root->right = deleteNode(root->right, temp->key);
+    }
+    return root;
+}
 // =================== END DELETE ===================
 
 
@@ -368,6 +436,8 @@ void cari() {
 // fungsi utama
 int main() {
     int pilihan;
+    int kode_komik;
+    int kode_komik_hapus;
     
     cout << "===============================" << endl;
 	cout << "=== Program Pendataan Komik ===" << endl; 
@@ -402,11 +472,12 @@ int main() {
                 switch (pilihan_insert) {
                     case 1:
                         // insert BST
-                        cout << ">> belum ada fungsi" << endl;
+                        cout << ">> Masukkan Kode Komik		: "; cin >> kode_komik;
+                        tambah(kode_komik);
+                        root = insertBST(root, kode_komik);
                         break;
                     case 2:
                         // insert AVL
-                        int kode_komik;
                         cout << ">> Masukkan Kode Komik		: "; cin >> kode_komik;
                         tambah(kode_komik);
                         root = insert(root, kode_komik);
@@ -457,11 +528,12 @@ int main() {
                 switch (pilihan_delete) {
                     case 1:
                         // delete BST
-                        cout << ">> belum ada fungsi" << endl;
+                        cout << "Masukkan kode komik yang akan dihapus: "; cin >> kode_komik_hapus;
+                        root = deleteNodeBST(root, kode_komik_hapus);
+                        getch();
                         break;
                     case 2:
                         // delete AVL
-                        int kode_komik_hapus;
                         cout << "Masukkan kode komik yang akan dihapus: "; cin >> kode_komik_hapus;
                         root = deleteNode(root, kode_komik_hapus);
                         getch();
