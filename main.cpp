@@ -450,6 +450,37 @@ int main() {
 
 	Node *root = NULL;
 
+    // create dummy data
+    int kode_komik_dummy[10] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+    char judul_dummy[10][50] = { "One Piece", "Naruto", "Bleach", "Dragon Ball", "Detective Conan", "Doraemon", "Slam Dunk", "Fairy Tail", "Gintama", "Hunter X Hunter" };
+    char penerbit_dummy[10][50] = { "Shueisha", "Shueisha", "Shueisha", "Shueisha", "Shogakukan", "Shogakukan", "Shogakukan", "Kodansha", "Kodansha", "Kodansha" };
+    char pengarang_dummy[10][50] = { "Eiichiro Oda", "Masashi Kishimoto", "Tite Kubo", "Akira Toriyama", "Gosho Aoyama", "Fujiko Fujio", "Takehiko Inoue", "Hiro Mashima", "Hideaki Sorachi", "Yoshihiro Togashi" };
+    int tahun_dummy[10] = { 1997, 1999, 2001, 1984, 1994, 1969, 1990, 2006, 2003, 1998 };
+    // Node *root = NULL;
+    for (int i = 0; i < 10; i++) {
+        if (rear == NULL) {
+            rear = (struct komik *)malloc(sizeof(struct komik));
+            rear->next = NULL;
+            rear->kode_komik = kode_komik_dummy[i];
+            strcpy(rear->judul, judul_dummy[i]);
+            strcpy(rear->penerbit, penerbit_dummy[i]);
+            strcpy(rear->pengarang, pengarang_dummy[i]);
+            rear->tahun = tahun_dummy[i];
+            front = rear;
+        } else {
+            temp=(struct komik *)malloc(sizeof(struct komik));
+            rear->next = temp;
+            temp->kode_komik = kode_komik_dummy[i];
+            strcpy(temp->judul, judul_dummy[i]);
+            strcpy(temp->penerbit, penerbit_dummy[i]);
+            strcpy(temp->pengarang, pengarang_dummy[i]);
+            temp->tahun = tahun_dummy[i];
+            temp->next = NULL;
+            rear = temp;
+        }
+        root = insert(root, kode_komik_dummy[i]);
+    }
+
     do {
         cout << "Pilihan menu yang tersedia : " << endl;
         cout << "1. Tambah Komik" << endl;
